@@ -130,6 +130,9 @@ if all_data:
         
         # Assuming 82 games in a season for NBA
         total_games_in_season = 82
+        
+        # Calculate percentage of games played - a critical metric for fantasy value
+        # This indicates a player's durability and availability throughout the season
         fantasy_df['PCT_GAMES_PLAYED'] = (fantasy_df['GP'] / total_games_in_season) * 100
         
         # Add minutes stats
@@ -159,10 +162,9 @@ if all_data:
             # Player info
             'SEASON', 'PLAYER_NAME', 'TEAM_ABBREVIATION', 
             # Game stats
-            'GP', 'MIN', 
+            'GP', 'PCT_GAMES_PLAYED', 'MIN', 'AVG_MINUTES', 'PCT_MINUTES_PLAYED',
             # Fantasy metrics
             'FANTASY_POINTS', 'AVG_FANTASY_PPG', 'FANTASY_POINTS_PER_MIN',
-            'PCT_GAMES_PLAYED', 'AVG_MINUTES', 'PCT_MINUTES_PLAYED',
             # Box score stats that contribute to fantasy
             'PTS', 'REB', 'AST', 'STL', 'BLK', 'TOV', 'PF',
             'FGM', 'FGA', 'FTM', 'FTA', 'FG3M', 'OREB'
@@ -176,7 +178,13 @@ if all_data:
         print("Columns in final dataset:")
         print(fantasy_df.columns.tolist())
         print("\nPreview of top players:")
-        print(fantasy_df.head())
+        print(fantasy_df[['PLAYER_NAME', 'TEAM_ABBREVIATION', 'GP', 'PCT_GAMES_PLAYED', 'FANTASY_POINTS']].head())
+        
+        # Print summary of key metrics for fantasy evaluation
+        print("\nKey metrics for fantasy evaluation:")
+        print(f"1. PCT_GAMES_PLAYED: Shows what percentage of the season's games a player participated in")
+        print(f"2. PCT_MINUTES_PLAYED: Shows what percentage of total possible minutes a player played")
+        print(f"3. FANTASY_POINTS_PER_MIN: Shows efficiency when on the court")
         
         # Save to CSV
         fantasy_df.to_csv('nba_fantasy_stats_new.csv', index=False)

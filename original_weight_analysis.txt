@@ -1,0 +1,28 @@
+
+Weight Analysis Results:
+---------------------------------------
+Weight for % Minutes | Weight for Points/Min | Correlation
+---------------------------------------
+      0.0         |        1.0         |   0.7081
+      0.1         |        0.9         |   0.7968
+      0.2         |        0.8         |   0.8669
+      0.3         |        0.7         |   0.9146
+      0.4         |        0.6         |   0.9409
+      0.5         |        0.5         |   0.9497
+      0.6         |        0.4         |   0.9460
+      0.7         |        0.3         |   0.9345
+      0.8         |        0.2         |   0.9185
+      0.9         |        0.1         |   0.9004
+      1.0         |        0.0         |   0.8816
+
+---------------------------------------
+Best weights: 0.5 for % minutes played, 0.5 for fantasy points per minute
+Best correlation: 0.9497
+
+Factor importance analysis:
+Correlation using ONLY % minutes played (1.0, 0.0): 0.8816
+Correlation using ONLY fantasy points per minute (0.0, 1.0): 0.7081
+% Minutes played is 1.25x more important than points per minute
+
+Conclusion:
+The optimal weight combination gives equal importance to both factors
