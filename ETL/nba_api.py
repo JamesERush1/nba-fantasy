@@ -2,6 +2,7 @@ import requests
 import json
 import pandas as pd
 import time
+from sheetClass.gsheetClass import GoogleSheets
 
 url = "https://stats.nba.com/stats/leaguedashplayerstats"
 params = {
@@ -193,3 +194,4 @@ if all_data:
         print(f"Error while processing data: {str(e)}")
 else:
     print("No data was fetched. Cannot create DataFrame.") 
+
