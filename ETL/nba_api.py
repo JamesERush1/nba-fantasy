@@ -2,7 +2,92 @@ import requests
 import json
 import pandas as pd
 import time
-from sheetClass.gsheetClass import GoogleSheets
+import os
+import sys
+import gspread
+from google.oauth2.service_account import Credentials
+from gspread_dataframe import set_with_dataframe
+import argparse
+
+# Parse command line arguments
+parser = argparse.ArgumentParser(description='NBA Fantasy Basketball Data Tool')
+parser.add_argument('--sheets', action='store_true', help='Upload data directly to Google Sheets')
+parser.add_argument('--worksheet', type=str, default='NBA_Fantasy_Data', help='Name of the worksheet for Google Sheets upload')
+parser.add_argument('--no-csv', action='store_true', help='Skip saving data to CSV file')
+args = parser.parse_args()
+
+# Google Sheet configuration
+SHEET_ID = '1NythdZUtn3IK9897ig8zGIXpA446z1rSMIUhemY6dhs'
+CREDENTIALS_FILE = 'service_account.json'
+
+def upload_df_to_google_sheets(df, worksheet_name=None):
+    """Upload a dataframe directly to Google Sheets"""
+    print("\nUploading data to Google Sheets...")
+    
+    # Check if credentials file exists
+    if not os.path.exists(CREDENTIALS_FILE):
+        print(f"Error: Credentials file '{CREDENTIALS_FILE}' not found in current directory.")
+        print(f"Make sure 'service_account.json' is in: {os.getcwd()}")
+        return False
+    
+    # Define the required scopes
+    scopes = [
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive'
+    ]
+    
+    # Get worksheet name if not provided
+    if worksheet_name is None:
+        worksheet_name = input("Enter worksheet name (or press Enter for default 'NBA_Fantasy_Data'): ")
+        if not worksheet_name.strip():
+            worksheet_name = "NBA_Fantasy_Data"
+    
+    try:
+        # Authenticate using the service account credentials
+        credentials = Credentials.from_service_account_file(
+            CREDENTIALS_FILE, 
+            scopes=scopes
+        )
+        
+        # Create a client to interact with Google Sheets API
+        client = gspread.authorize(credentials)
+        
+        # Open the spreadsheet by its ID
+        spreadsheet = client.open_by_key(SHEET_ID)
+        print(f"Successfully connected to spreadsheet: {spreadsheet.title}")
+        
+        # Try to find existing worksheet or create new one
+        try:
+            worksheet = spreadsheet.worksheet(worksheet_name)
+            print(f"Using existing worksheet: {worksheet_name}")
+            # Clear existing content
+            worksheet.clear()
+        except gspread.exceptions.WorksheetNotFound:
+            # Create new worksheet
+            worksheet = spreadsheet.add_worksheet(
+                title=worksheet_name, 
+                rows=max(100, len(df) + 10), 
+                cols=max(20, len(df.columns) + 5)
+            )
+            print(f"Created new worksheet: {worksheet_name}")
+        
+        # Upload the data
+        set_with_dataframe(
+            worksheet=worksheet,
+            dataframe=df,
+            include_index=False,
+            include_column_header=True,
+            resize=True
+        )
+        
+        print(f"Successfully uploaded data to worksheet '{worksheet_name}'")
+        print(f"Access your data at: https://docs.google.com/spreadsheets/d/{SHEET_ID}/edit#gid={worksheet.id}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"Error uploading to Google Sheets: {e}")
+        return False
 
 url = "https://stats.nba.com/stats/leaguedashplayerstats"
 params = {
@@ -187,11 +272,20 @@ if all_data:
         print(f"2. PCT_MINUTES_PLAYED: Shows what percentage of total possible minutes a player played")
         print(f"3. FANTASY_POINTS_PER_MIN: Shows efficiency when on the court")
         
-        # Save to CSV
-        fantasy_df.to_csv('nba_fantasy_stats_new.csv', index=False)
-        print("Fantasy data saved to nba_fantasy_stats_new.csv")
+        # Save to CSV (unless --no-csv flag is used)
+        if not args.no_csv:
+            fantasy_df.to_csv('nba_fantasy_stats_new.csv', index=False)
+            print("Fantasy data saved to nba_fantasy_stats_new.csv")
+        
+        # Upload to Google Sheets if requested via command line or prompt user
+        if args.sheets:
+            upload_df_to_google_sheets(fantasy_df, args.worksheet)
+        else:
+            upload_to_sheets = input("\nDo you want to upload this data to Google Sheets? (y/n): ").lower() == 'y'
+            if upload_to_sheets:
+                upload_df_to_google_sheets(fantasy_df)
+            
     except Exception as e:
         print(f"Error while processing data: {str(e)}")
 else:
     print("No data was fetched. Cannot create DataFrame.") 
-
