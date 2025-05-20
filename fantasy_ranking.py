@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy import stats
 
 # Load the fantasy data
@@ -144,69 +143,4 @@ df_ranking_output = df_ranked[['PLAYER_NAME', 'TEAM_ABBREVIATION',
                              'GP', 'AVG_MINUTES', 'FANTASY_POINTS', 'AVG_FANTASY_PPG']]
 
 df_ranking_output.to_csv('nba_fantasy_rankings_three_metrics.csv', index=False)
-print("\nDetailed rankings saved to nba_fantasy_rankings_three_metrics.csv")
-
-# Visualize relationship between all three metrics
-plt.figure(figsize=(12, 8))
-
-# Create a more informative 3D plot
-fig = plt.figure(figsize=(14, 10))
-ax = fig.add_subplot(111, projection='3d')
-
-scatter = ax.scatter(df_filtered['PCT_GAMES_PLAYED'], 
-                     df_filtered['PCT_MINUTES_PLAYED'],
-                     df_filtered['FANTASY_POINTS_PER_MIN'],
-                     c=df_filtered['FANTASY_POINTS'], 
-                     cmap='viridis', 
-                     alpha=0.7,
-                     s=80)
-
-# Add a colorbar legend
-cbar = plt.colorbar(scatter)
-cbar.set_label('Total Fantasy Points', size=12)
-
-# Label the top players
-top_players = df_filtered.nlargest(15, 'FANTASY_POINTS')
-for _, player in top_players.iterrows():
-    ax.text(player['PCT_GAMES_PLAYED'], 
-            player['PCT_MINUTES_PLAYED'], 
-            player['FANTASY_POINTS_PER_MIN'],
-            player['PLAYER_NAME'],
-            fontsize=8, alpha=0.8)
-
-ax.set_title('Fantasy Value: 3D Relationship Between Key Metrics', size=14)
-ax.set_xlabel('% of Games Played', size=12)
-ax.set_ylabel('% of Minutes Played', size=12)
-ax.set_zlabel('Fantasy Points per Minute', size=12)
-
-plt.tight_layout()
-plt.savefig('fantasy_value_3d.png', dpi=300)
-print("3D visualization saved to fantasy_value_3d.png")
-
-# Maintain the original 2D visualization for backward compatibility
-plt.figure(figsize=(12, 8))
-scatter = plt.scatter(df_filtered['PCT_GAMES_PLAYED'], 
-                     df_filtered['FANTASY_POINTS_PER_MIN'],
-                     c=df_filtered['FANTASY_POINTS'], 
-                     cmap='viridis', 
-                     alpha=0.7,
-                     s=100)
-
-# Add a colorbar legend
-cbar = plt.colorbar(scatter)
-cbar.set_label('Total Fantasy Points', size=12)
-
-# Label the top players
-top_players = df_filtered.nlargest(15, 'FANTASY_POINTS')
-for _, player in top_players.iterrows():
-    plt.annotate(player['PLAYER_NAME'], 
-                (player['PCT_GAMES_PLAYED'], player['FANTASY_POINTS_PER_MIN']),
-                fontsize=8, alpha=0.8)
-
-plt.title('Fantasy Value: % Games Played vs Fantasy Points per Minute', size=14)
-plt.xlabel('% of Games Played', size=12)
-plt.ylabel('Fantasy Points per Minute', size=12)
-plt.grid(alpha=0.3)
-plt.tight_layout()
-plt.savefig('fantasy_value_games_pct.png', dpi=300)
-print("2D visualization saved to fantasy_value_games_pct.png") 
+print("\nDetailed rankings saved to nba_fantasy_rankings_three_metrics.csv") 

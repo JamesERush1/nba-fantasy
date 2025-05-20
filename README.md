@@ -8,8 +8,7 @@ This project provides tools to:
 1. Fetch NBA player statistics from official sources
 2. Calculate fantasy points based on standard scoring systems
 3. Rank players using a sophisticated three-metric approach
-4. Generate visualizations of player value
-5. Recommend available players for pickup
+4. Recommend available players for pickup
 
 ## Key Components
 
@@ -34,13 +33,6 @@ Our ranking system balances three critical factors for fantasy basketball succes
 3. **% Games Played** - Measures reliability/durability
 
 The system analyzes different weight combinations for these metrics and determines the optimal weights that correlate best with total fantasy production. This balanced approach provides a more accurate picture of a player's true fantasy value than traditional metrics.
-
-## Visualizations
-
-The system generates visualizations to help you understand the relationships between key metrics:
-
-1. A 3D visualization showing the relationship between all three metrics
-2. A 2D scatter plot of % Games Played vs Fantasy Points Per Minute
 
 ## Usage
 
@@ -72,7 +64,6 @@ The system generates visualizations to help you understand the relationships bet
 - Python 3.6+
 - pandas
 - numpy
-- matplotlib
 - scipy
 - requests
 
@@ -88,12 +79,10 @@ Analyzes NBA player stats and generates advanced fantasy rankings based on relia
 - Estimates usage rates to measure player involvement
 - Generates optimal weightings between metrics
 - Ranks players based on combined metrics
-- Creates visualizations of player value
 
 **Output:**
 - `nba_fantasy_rankings_new_metrics.csv`: Complete player rankings
 - `new_metrics_analysis.txt`: Analysis of metric importance
-- `fantasy_value_new_metrics.png`: Visual plot of player values
 
 ### 2. ESPN Fantasy Scraper (`fantasy_espn_scraper.py`)
 
@@ -146,7 +135,6 @@ Choose the method that best aligns with your fantasy league's scoring system and
 ```
 pandas
 numpy
-matplotlib
 scipy
 selenium
 webdriver_manager
@@ -157,7 +145,7 @@ webdriver_manager
 1. Clone this repository
 2. Install required packages:
    ```
-   pip install pandas numpy matplotlib scipy selenium webdriver_manager
+   pip install pandas numpy scipy selenium webdriver_manager
    ```
 3. Make sure you have Chrome installed (required for the ESPN scraper)
 
